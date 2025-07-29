@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <style>
+        @keyframes gradientBG {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+
+        body {
+          font-family: 'Arial', sans-serif;
+          background: linear-gradient(-45deg, #74ebd5, #ACB6E5, #FFDEE9, #B5FFFC);
+          background-size: 400% 400%;
+          animation: gradientBG 12s ease infinite;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 100vh;
+          margin: 0;
+        }
+
+        .weather-container {
+          background: rgba(255, 255, 255, 0.85);
+          padding: 20px;
+          border-radius: 15px;
+          text-align: center;
+          width: 320px;
+          box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.2);
+          transition: transform 0.3s ease;
+        }
+
+        .weather-container:hover {
+          transform: scale(1.05);
+        }
+
+        h1 {
+          margin-bottom: 10px;
+          font-size: 24px;
+          color: #333;
+        }
+
+        input {
+          width: 80%;
+          padding: 10px;
+          margin-top: 10px;
+          border: 1px solid #ccc;
+          border-radius: 5px;
+          font-size: 14px;
+          outline: none;
+        }
+
+        input:focus {
+          border-color: #4CAF50;
+          box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+        }
+
+        button {
+          padding: 10px 20px;
+          margin-top: 12px;
+          border: none;
+          border-radius: 5px;
+          background: linear-gradient(45deg, #6a11cb, #2575fc);
+          color: white;
+          cursor: pointer;
+          font-size: 14px;
+          transition: transform 0.2s, background 0.3s;
+        }
+
+        button:hover {
+          background: linear-gradient(45deg, #2575fc, #6a11cb);
+          transform: scale(1.1);
+        }
+
+        .weather-info {
+          margin-top: 20px;
+          display: none;
+        }
+
+        #weatherIcon {
+          width: 100px;
+          height: 100px;
+        }
+
+        p {
+          margin: 5px 0;
+          color: #333;
+        }
+    </style>
+</head>
+<body>
+<div class="weather-container">
+    <h1>Weather Forecast</h1>
+    <input type="text" id="cityInput" placeholder="Enter city name">
+    <button id="getWeatherBtn">Get Weather</button>
+
+    <div class="weather-info" id="weatherInfo">
+        <h2 id="cityName"></h2>
+        <img id="weatherIcon" src="" alt="Weather Icon" />
+        <p id="temperature"></p>
+        <p id="description"></p>
+    </div>
+</div>
+
+<script>
+    const apiKey = "10add2d933efbc2b8d65a23bdaf42e83";
+
+    document.getElementById("getWeatherBtn").addEventListener("click", () => {
+        const city = document.getElementById("cityInput").value.trim();
+        if (city === "") {
+            alert("Please enter a city name");
+            return;
+        }
+        getWeather(city);
+    });
+
+    async function getWeather(city) {
+        const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+
+        try {
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error("City not found");
+            }
+            const data = await response.json();
+
+            document.getElementById("cityName").textContent = data.name;
+            document.getElementById("temperature").textContent = `Temperature: ${data.main.temp}°C`;
+            document.getElementById("description").textContent = data.weather[0].description;
+            document.getElementById("weatherIcon").src = `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;
+
+            document.getElementById("weatherInfo").style.display = "block";
+        } catch (error) {
+            alert(error.message);
+        }
+    }
+</script>
+</body>
+</html>
